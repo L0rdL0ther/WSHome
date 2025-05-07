@@ -1,5 +1,9 @@
 # Smart Home System
 
+🌐 **Demo**: [https://wsdemo.cr-i.tr/](https://wsdemo.cr-i.tr/) – Create an account and explore the live Smart Home Dashboard.
+
+A modular, full-stack Smart Home Automation System designed for expandability, real-time control, and clean architecture. Built using Kotlin (Spring Boot), TypeScript (React), ESP-IDF (C), and PostgreSQL — this system supports seamless IoT integration for modern smart homes.
+
 A modular, full-stack Smart Home Automation System designed for expandability, real-time control, and clean architecture. Built using Kotlin (Spring Boot), TypeScript (React), ESP-IDF (C), and PostgreSQL — this system supports seamless IoT integration for modern smart homes.
 
 ## 🚀 Install the System (Quick Setup)
