@@ -1,15 +1,15 @@
 # Smart Home System
 
-A modular, full-stack Smart Home Automation System designed for ease of use, expandability, and real-time control. Built with Kotlin (Spring Boot), TypeScript (React), ESP32 (Arduino), and PostgreSQL, this system enables seamless integration of IoT devices into a modern smart home ecosystem.
+A modular, full-stack Smart Home Automation System designed for expandability, real-time control, and clean architecture. Built using Kotlin (Spring Boot), TypeScript (React), ESP-IDF (C), and PostgreSQL — this system supports seamless IoT integration for modern smart homes.
 
 ## 🧠 Overview
 
 This project consists of four main components:
 
-1. **Backend** – Spring Boot server for business logic and API
-2. **Frontend** – Modern React UI with Tailwind, Framer Motion, Vite
-3. **ESP32 Integration** – Arduino-based control and communication with smart devices
-4. **Custom Kotlin Library** – Shared utilities for reusability and clean architecture
+1. **Backend** – Spring Boot server with REST/WebSocket APIs
+2. **Frontend** – Responsive React interface with modern UI libraries
+3. **Device Firmware** – ESP-IDF-based firmware for ESP32 (or any WebSocket-enabled device)
+4. **Shared Kotlin Library** – Reusable utilities and abstractions
 
 ---
 
@@ -19,8 +19,8 @@ This project consists of four main components:
 |----------------|---------------------------------------------------|----------------------------------------------------------------------|
 | Backend         | Kotlin + Spring Boot REST API with PostgreSQL    | [smart_home](https://github.com/L0rdL0ther/smart_home)               |
 | Frontend        | TypeScript + React frontend with modern tooling  | [SmartHome](https://github.com/L0rdL0ther/SmartHome)                 |
-| ESP32 Firmware  | Arduino/C++ code for ESP32 IoT device logic      | [home_managment](https://github.com/L0rdL0ther/home_managment)       |
-| Kotlin Library  | Custom Kotlin library shared across projects     | [wanim-library](https://github.com/WatchAnime-com/wanim-library)     |
+| Device Firmware | ESP-IDF C project for smart devices               | [home_managment](https://github.com/L0rdL0ther/home_managment)       |
+| Kotlin Library  | Custom Kotlin library for backend services       | [wanim-library](https://github.com/WatchAnime-com/wanim-library)     |
 
 ---
 
@@ -29,12 +29,12 @@ This project consists of four main components:
 - **Language:** Kotlin
 - **Framework:** Spring Boot
 - **Database:** PostgreSQL
-- **Security:** JWT-based authentication
+- **Authentication:** JWT
+- **Real-Time:** WebSocket support for two-way device communication
 - **Features:**
-  - Device registration & management
-  - User roles & permissions
-  - Real-time device state control via REST APIs
-  - Integration with ESP32 microcontrollers
+  - User/device authentication & control
+  - RESTful & WebSocket APIs
+  - Role-based access management
 
 🔗 Repo: [smart_home](https://github.com/L0rdL0ther/smart_home)
 
@@ -45,31 +45,36 @@ This project consists of four main components:
 - **Framework:** React (Vite)
 - **Language:** TypeScript
 - **Styling:** TailwindCSS
-- **Animations:** Framer Motion
-- **Design:** Lucid, responsive, and mobile-friendly
+- **Animation:** Framer Motion
+- **Design:** Clean, modern, and mobile-ready
 
 🔗 Repo: [SmartHome](https://github.com/L0rdL0ther/SmartHome)
 
 ---
 
-## 📡 ESP32 Firmware
+## 🔌 Device Integration
 
-- **Board:** ESP32
-- **Language:** Arduino (C++)
+- **Primary Platform:** ESP32 using **ESP-IDF** (C)
+- **Communication:** WebSocket-based bidirectional messaging
+- **Compatibility:**  
+  This system is **not limited to ESP32**. Any device capable of:
+  - Connecting to the internet  
+  - Communicating via WebSocket  
+  ...can be integrated into this platform.
+  
 - **Functions:**
-  - Connects to backend via WiFi
-  - Sends and receives JSON data
-  - Controls physical devices (e.g. lights, sensors)
+  - Real-time command reception
+  - Device state reporting
+  - Custom protocol over WebSocket
 
 🔗 Repo: [home_managment](https://github.com/L0rdL0ther/home_managment)
 
 ---
 
-## 📚 Kotlin Library
+## 📚 Kotlin Shared Library
 
-- Reusable utilities for DTOs, HTTP handling, and more
-- Shared across multiple Kotlin-based services
-- Built to keep backend code clean and DRY
+- Common utilities, DTOs, and backend abstractions
+- Designed for modularity and DRY principles across microservices
 
 🔗 Repo: [wanim-library](https://github.com/WatchAnime-com/wanim-library)
 
@@ -82,13 +87,9 @@ This project consists of four main components:
 - Java 17+
 - Node.js (LTS)
 - PostgreSQL
-- Arduino IDE (for ESP32)
+- ESP-IDF & toolchain (for device firmware)
 - Docker (optional)
 
 ### Run Locally
 
 #### Backend
-
-```bash
-cd smart_home
-./gradlew bootRun
