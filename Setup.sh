@@ -12,19 +12,30 @@ echo "✅ Docker found."
 
 read -p "🌐 Enter backend address (domain/ip): " SITE_METHOD
 
-# Determine protocol and API URL format
+IS_DOMAIN=false
 if [[ "$SITE_METHOD" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+  IS_DOMAIN=true
   read -p "🔐 Is your domain using HTTPS? (y/n): " USE_HTTPS
   if [[ "$USE_HTTPS" == "y" || "$USE_HTTPS" == "Y" ]]; then
     PROTOCOL="https"
   else
     PROTOCOL="http"
   fi
-  API_URL="${PROTOCOL}://${SITE_METHOD}"
 else
   PROTOCOL="http"
-  read -p "🔧 Enter backend port (default 8237): " BACKEND_PORT
-  BACKEND_PORT=${BACKEND_PORT:-8237}
+fi
+
+read -p "🔧 Enter backend port (default 8237): " BACKEND_PORT
+BACKEND_PORT=${BACKEND_PORT:-8237}
+
+if $IS_DOMAIN; then
+  read -p "🌐 Is your domain behind a proxy like Cloudflare? (y/n): " BEHIND_PROXY
+  if [[ "$BEHIND_PROXY" == "y" || "$BEHIND_PROXY" == "Y" ]]; then
+    API_URL="${PROTOCOL}://${SITE_METHOD}"
+  else
+    API_URL="${PROTOCOL}://${SITE_METHOD}:${BACKEND_PORT}"
+  fi
+else
   API_URL="${PROTOCOL}://${SITE_METHOD}:${BACKEND_PORT}"
 fi
 
@@ -83,7 +94,7 @@ docker run -d \
   --network smart-home-net \
   -v $(pwd)/config:/app/config \
   -e SPRING_CONFIG_LOCATION=file:/app/config/application.yml \
-  -p ${BACKEND_PORT:-8237}:8080 \
+  -p ${BACKEND_PORT}:8080 \
   ${BACKEND_IMAGE}
 
 echo "🎨 Starting frontend container..."
