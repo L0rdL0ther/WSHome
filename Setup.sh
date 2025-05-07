@@ -10,12 +10,26 @@ fi
 
 echo "✅ Docker found."
 
-read -p "🌐 Enter site access method (domain/ip): " SITE_METHOD
+read -p "🌐 Enter backend address (domain/ip): " SITE_METHOD
+
+# Determine protocol and API URL format
+if [[ "$SITE_METHOD" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+  read -p "🔐 Is your domain using HTTPS? (y/n): " USE_HTTPS
+  if [[ "$USE_HTTPS" == "y" || "$USE_HTTPS" == "Y" ]]; then
+    PROTOCOL="https"
+  else
+    PROTOCOL="http"
+  fi
+  API_URL="${PROTOCOL}://${SITE_METHOD}"
+else
+  PROTOCOL="http"
+  read -p "🔧 Enter backend port (default 8237): " BACKEND_PORT
+  BACKEND_PORT=${BACKEND_PORT:-8237}
+  API_URL="${PROTOCOL}://${SITE_METHOD}:${BACKEND_PORT}"
+fi
+
 read -p "🌐 Enter frontend port (default 80): " FRONTEND_PORT
 FRONTEND_PORT=${FRONTEND_PORT:-80}
-
-read -p "🔧 Enter backend port (default 8237): " BACKEND_PORT
-BACKEND_PORT=${BACKEND_PORT:-8237}
 
 USERNAME="user_$(openssl rand -hex 4)"
 PASSWORD="pass_$(openssl rand -hex 4)"
@@ -50,6 +64,9 @@ EOF
 
 echo "✅ application.yml created in ./config"
 
+echo "📦 Creating volume for PostgreSQL..."
+docker volume create smart-home-pgdata
+
 echo "🐘 Starting PostgreSQL container..."
 docker run -d \
   --name ws-pg-db \
@@ -57,6 +74,7 @@ docker run -d \
   -e POSTGRES_USER=${USERNAME} \
   -e POSTGRES_PASSWORD=${PASSWORD} \
   -e POSTGRES_DB=smart-home \
+  -v smart-home-pgdata:/var/lib/postgresql/data \
   postgres:15
 
 echo "🚀 Starting backend container..."
@@ -65,16 +83,15 @@ docker run -d \
   --network smart-home-net \
   -v $(pwd)/config:/app/config \
   -e SPRING_CONFIG_LOCATION=file:/app/config/application.yml \
-  -p ${BACKEND_PORT}:8080 \
+  -p ${BACKEND_PORT:-8237}:8080 \
   ${BACKEND_IMAGE}
 
 echo "🎨 Starting frontend container..."
 docker run -d \
   --name ws-home-frontend \
-  --network smart-home-net \
-  -e API_URL=http://${SITE_METHOD}:${BACKEND_PORT} \
+  -e API_URL=${API_URL} \
   -p ${FRONTEND_PORT}:80 \
   ${FRONTEND_IMAGE}
 
 echo "✅ All containers are up and running!"
-echo "🌐 Access your frontend via http://${SITE_METHOD}:${FRONTEND_PORT}"
+echo "🌐 Access your frontend via ${PROTOCOL}://${SITE_METHOD}:${FRONTEND_PORT}"
